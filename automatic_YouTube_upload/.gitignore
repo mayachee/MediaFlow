@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Secrets - never commit these
+client_secret.json
+client_secret_*.json
+token.pickle
+*.pickle
+
+# Logs and temp files
+*.log
+upload_output.txt
+
+# Output directories
+output/
+temp/
+
+# Input audio (downloaded files)
+input/audio/
+
+# OS
+.DS_Store
+Thumbs.db

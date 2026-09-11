@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+.venv/
+
+# Output directories
+output/
+*.mp4
+*.mp3
+*.webm
+*.m4a
+
+# Input audio (downloaded files)
+input/audio/
+
+# OS
+.DS_Store
+Thumbs.db

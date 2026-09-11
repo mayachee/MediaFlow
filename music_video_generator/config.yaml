@@ -1,0 +1,48 @@
+video:
+  width: 1280
+  height: 720
+  fps: 30
+  bitrate: "15M"
+  codec: "libx264"
+  preset: "ultrafast"
+  pixel_format: "yuv420p"
+  audio_codec: "aac"
+  audio_bitrate: "320k"
+
+image:
+  default_duration: 12.0
+  zoom_factor: 1.15
+  transition_duration: 0.5
+  effect: "zoompan"
+
+beat_detection:
+  enabled: true
+  method: "librosa"
+  hop_length: 512
+  backtrack: true
+  trim: true
+
+audio:
+  format: "mp3"
+  bitrate: "320k"
+
+playlist:
+  enabled: true
+  crossfade_duration: 0.0
+  sort_by: "name"
+
+paths:
+  input_images: "input/images"
+  input_audio: "input/audio"
+  output: "output"
+
+effects:
+  ken_burns:
+    enabled: true
+    zoom_in: true
+    zoom_speed: 0.02
+
+  transitions:
+    enabled: true
+    type: "fade"
+    duration: 0.5
