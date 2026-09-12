@@ -44,18 +44,22 @@ upload:
 all: search download generate upload
 	@echo "=== Full workflow complete! ==="
 
-## Clean: Remove all generated files
+## Clean: Remove all generated files from all subdirectories
 clean:
-	@echo "Cleaning generated files..."
-	@if exist youtube_automation\youtube_links.txt del /Q youtube_automation\youtube_links.txt
-	@if exist music_video_generator\output rmdir /S /Q music_video_generator\output
-	@if exist automatic_YouTube_upload\token.pickle del /Q automatic_YouTube_upload\token.pickle
-	@if exist automatic_YouTube_upload\*.log del /Q automatic_YouTube_upload\*.log
+	@echo "=== Cleaning all generated files ==="
+	@echo "Cleaning youtube_automation..."
+	@cd youtube_automation && del /Q youtube_links.txt 2>nul || true
 	@if exist youtube_automation\__pycache__ rmdir /S /Q youtube_automation\__pycache__
+	@if exist youtube_automation\downloads rmdir /S /Q youtube_automation\downloads
+	@echo "Cleaning music_video_generator..."
+	@if exist music_video_generator\output rmdir /S /Q music_video_generator\output
 	@if exist music_video_generator\__pycache__ rmdir /S /Q music_video_generator\__pycache__
 	@if exist music_video_generator\src\__pycache__ rmdir /S /Q music_video_generator\src\__pycache__
+	@echo "Cleaning automatic_YouTube_upload..."
+	@if exist automatic_YouTube_upload\token.pickle del /Q automatic_YouTube_upload\token.pickle
+	@if exist automatic_YouTube_upload\*.log del /Q automatic_YouTube_upload\*.log
 	@if exist automatic_YouTube_upload\__pycache__ rmdir /S /Q automatic_YouTube_upload\__pycache__
-	@echo "Cleaned!"
+	@echo "=== All cleaned! ==="
 
 ## Help: Show available targets
 help:

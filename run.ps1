@@ -72,16 +72,20 @@ function Invoke-All {
 }
 
 function Invoke-Clean {
-    Write-Host "Cleaning generated files..." -ForegroundColor Green
+    Write-Host "=== Cleaning all generated files ===" -ForegroundColor Green
+    Write-Host "Cleaning youtube_automation..."
     Remove-Item -Path "$Root\youtube_automation\youtube_links.txt" -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$Root\music_video_generator\output" -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$Root\automatic_YouTube_upload\token.pickle" -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path "$Root\automatic_YouTube_upload\*.log" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\youtube_automation\downloads" -Recurse -Force -ErrorAction SilentlyContinue
     Get-ChildItem "$Root\youtube_automation\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    Write-Host "Cleaning music_video_generator..."
+    Remove-Item -Path "$Root\music_video_generator\output" -Recurse -Force -ErrorAction SilentlyContinue
     Get-ChildItem "$Root\music_video_generator\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
     Get-ChildItem "$Root\music_video_generator\src\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    Write-Host "Cleaning automatic_YouTube_upload..."
+    Remove-Item -Path "$Root\automatic_YouTube_upload\token.pickle" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\automatic_YouTube_upload\*.log" -Force -ErrorAction SilentlyContinue
     Get-ChildItem "$Root\automatic_YouTube_upload\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-    Write-Host "Cleaned!" -ForegroundColor Green
+    Write-Host "=== All cleaned! ===" -ForegroundColor Green
 }
 
 function Show-Help {
