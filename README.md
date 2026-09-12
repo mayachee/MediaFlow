@@ -9,17 +9,30 @@ Automated tools for YouTube audio/video workflow:
 
 ## Quick Start
 
+### Full pipeline (one command)
+
+#### Linux/macOS
 ```bash
-cd youtube_automation
-python main.py                    # Search songs -> youtube_links.txt
-python download_mp3.py            # Download audio files
-
-cd ../music_video_generator
-python main.py                    # Create music video (audio + images -> mp4)
-
-cd ../automatic_YouTube_upload
-python youtube_uploader.py --video ../music_video_generator/output/music_video.mp4 --title "My Video"
+make setup                                                                       # Install all dependencies
+make all                                                                         # Search -> Download -> Generate -> Upload
 ```
+
+#### Windows PowerShell
+```powershell
+.\run.ps1 setup                                                                  # Install all dependencies
+.\run.ps1 all                                                                    # Search -> Download -> Generate -> Upload
+```
+
+### Individual steps
+
+| Command | Linux/macOS | Windows |
+|---------|-------------|---------|
+| Setup | `make setup` | `.\run.ps1 setup` |
+| Search YouTube | `make search` | `.\run.ps1 search` |
+| Download audio | `make download` | `.\run.ps1 download` |
+| Generate video | `make generate` | `.\run.ps1 generate` |
+| Upload to YouTube | `make upload` | `.\run.ps1 upload` |
+| Clean outputs | `make clean` | `.\run.ps1 clean` |
 
 ## Setup
 
@@ -29,3 +42,5 @@ Each subdirectory is self-contained with its own `requirements.txt`.
 - Python 3.11+
 - FFmpeg (`winget install ffmpeg` or `brew install ffmpeg`)
 - Google Cloud credentials for YouTube upload (see `automatic_YouTube_upload/README.md`)
+https://console.cloud.google.com/
+https://github.com/GyanD/media-autobuild_suite

@@ -1,54 +1,77 @@
 # Music Video Generator
 
-Automated music video generator from audio files and images.
-Creates high-quality videos with beat-synced transitions and zoompan effects.
+Create music videos from audio files and images using Python + FFmpeg.
 
-## Project Structure
+## Quick Start
+
+### Windows (PowerShell)
+```powershell
+.\run.ps1 install      # First time: install dependencies
+.\run.ps1 generate     # Create music video -> output/music_video.mp4
+.\run.ps1 clean        # Remove generated files
+```
+
+### Linux/macOS (Makefile)
+```bash
+make install           # Install dependencies
+make generate          # Create music video -> output/music_video.mp4
+make clean             # Remove generated files
+```
+
+## Prerequisites
+
+- **Python 3.11+**
+- **FFmpeg** (critical dependency)
+  - Windows: `winget install ffmpeg`
+  - macOS: `brew install ffmpeg`
+  - Linux: `sudo apt install ffmpeg`
+
+## Directories
 
 ```
 music_video_generator/
 ├── input/
-│   ├── images/          # Put your images here
-│   └── audio/           # Put your audio files here
-├── output/              # Generated videos will be saved here
-├── src/
-│   ├── __init__.py
-│   ├── audio_analyzer.py # Beat detection and audio analysis
-│   ├── image_processor.py # Image preparation and effects
-│   ├── video_generator.py # FFmpeg-based video creation
-│   └── utils.py         # Helper utilities
-├── config.yaml          # Configuration settings
-├── requirements.txt     # Python dependencies
-└── main.py              # Main entry point
+│   ├── audio/          # Put your audio files here (.mp3, .webm, .wav, etc.)
+│   └── images/         # Put your images here (.jpg, .png, .webp, etc.)
+├── output/             # Generated videos are saved here
+├── src/                # Core modules
+│   ├── audio_analyzer.py  # Audio analysis (librosa)
+│   ├── image_processor.py # Image preparation (PIL)
+│   ├── video_generator.py # FFmpeg video creation
+│   └── utils.py           # Helper utilities
+├── config.yaml         # Configuration
+├── main.py             # Main entry point
+└── requirements.txt
 ```
 
-## Quick Start
+## Configuration
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Edit `config.yaml` to adjust:
 
-2. Install FFmpeg:
-   ```bash
-   # Windows
-   winget install ffmpeg
-   
-   # Or download from https://ffmpeg.org/download.html
-   ```
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `video.width` | Output width | 1280 |
+| `video.height` | Output height | 720 |
+| `video.fps` | Frames per second | 30 |
+| `video.preset` | FFmpeg encoding preset | ultrafast |
+| `image.default_duration` | Seconds per image | 12.0 |
+| `image.zoom_factor` | Ken Burns zoom amount | 1.15 |
+| `beat_detection.enabled` | Beat-synced scenes | true |
+| `effects.ken_burns.enabled` | Enable zoom effect | true |
+| `effects.transitions.enabled` | Enable fade transitions | true |
 
-3. Add your files:
-   - Put images in `input/images/`
-   - Put audio in `input/audio/`
+## How It Works
 
-4. Run:
-   ```bash
-   python main.py
-   ```
+1. Reads audio files from `input/audio/` (supports playlists)
+2. Analyzes audio duration and beats (if librosa is available)
+3. Matches images from `input/images/` (one image per song)
+4. Generates scenes with Ken Burns + fade effects via FFmpeg
+5. Concatenates all scenes with audio into final video
+6. Output saved to `output/music_video.mp4`
 
-## Output
+## Notes
 
-- High-quality MP4 (H.264, 1080p, 30fps)
-- Beat-synced scene transitions
-- Smooth zoompan effects on images
-- Optional MP3 conversion for compatibility
+- If you have 3 songs, 3 images will be used (one per song)
+- Without librosa, falls back to equal-duration scenes
+- Audio must be installed in the same virtual environment if using a venv
+- Output quality can be adjusted in config.yaml (resolution, CRF, bitrate)
