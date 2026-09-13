@@ -33,7 +33,20 @@ function Invoke-Upload {
     Set-Location $Root
 }
 
-function Invoke-All { Invoke-Search; Invoke-Download; Invoke-Generate; Invoke-Upload }
+function Invoke-Copy {
+    Write-Host "=== Copying audio to music_video_generator ===" -ForegroundColor Green
+    $src = "$Root\youtube_automation\downloads"
+    $dst = "$Root\music_video_generator\input\audio"
+    if (-not (Test-Path $dst)) { New-Item -ItemType Directory -Path $dst -Force | Out-Null }
+    if (Test-Path $src) {
+        Copy-Item -Path "$src\*.mp3" -Destination $dst -Force -ErrorAction SilentlyContinue
+        Copy-Item -Path "$src\*.webm" -Destination $dst -Force -ErrorAction SilentlyContinue
+        Copy-Item -Path "$src\*.mp4" -Destination $dst -Force -ErrorAction SilentlyContinue
+    }
+    Write-Host "Copied audio files!" -ForegroundColor Green
+}
+
+function Invoke-All { Invoke-Search; Invoke-Download; Invoke-Copy; Invoke-Generate; Invoke-Upload }
 
 function Invoke-Clean {
     Write-Host "=== Cleaning all generated files ===" -ForegroundColor Green
@@ -72,3 +85,4 @@ switch ($Target) {
     "clean" { Invoke-Clean }
     "help" { Show-Help }
 }
+
