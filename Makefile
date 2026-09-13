@@ -31,9 +31,18 @@ search:
 
 ## Download: Download MP3 from found links
 download:
-	@echo "$(BOLD)$(GREEN)>>> Downloading audio files...$(RESET)"
+	$(call step,Downloading audio files...)
 	cd youtube_automation && $(PYTHON) download_mp3.py
-	@echo "$(GREEN)OK: Downloads complete$(RESET)"
+	$(call ok,Audio downloads complete)
+
+## Copy: Move downloaded audio to music_video_generator input
+copy:
+	$(call step,Copying audio files...)
+	mkdir -p music_video_generator/input/audio
+	cp -f youtube_automation/downloads/*.mp3 music_video_generator/input/audio/ 2>/dev/null || true
+	cp -f youtube_automation/downloads/*.webm music_video_generator/input/audio/ 2>/dev/null || true
+	cp -f youtube_automation/downloads/*.mp4 music_video_generator/input/audio/ 2>/dev/null || true
+	$(call ok,Audio files copied)
 
 ## Generate: Create music video from audio + images
 generate:
@@ -52,8 +61,8 @@ upload:
 		--privacy public
 	@echo "$(GREEN)OK: Upload complete$(RESET)"
 
-## All: Full workflow (search -> download -> generate -> upload)
-all: search download generate upload
+## All: Full workflow (search -> download -> copy -> generate -> upload)
+all: search download copy generate upload
 	@echo ""
 	@echo "$(BOLD)$(GREEN)=========================================$(RESET)"
 	@echo "$(BOLD)$(GREEN) Full workflow complete! Video uploaded.   $(RESET)"
@@ -84,8 +93,9 @@ help:
 	@echo "  make setup    - Install all dependencies and check FFmpeg"
 	@echo "  make search   - Search YouTube for song links"
 	@echo "  make download - Download MP3 files from links"
+	@echo "  make copy     - Copy downloads to music_video_generator input"
 	@echo "  make generate - Create music video from audio + images"
 	@echo "  make upload   - Upload video to YouTube"
-	@echo "  make all      - Run full pipeline (search -> download -> generate -> upload)"
+	@echo "  make all      - Run full pipeline (search -> download -> copy -> generate -> upload)"
 	@echo "  make clean    - Remove all generated files"
 	@echo "  make help     - Show this help message"
