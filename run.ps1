@@ -50,14 +50,20 @@ function Invoke-All { Invoke-Search; Invoke-Download; Invoke-Copy; Invoke-Genera
 
 function Invoke-Clean {
     Write-Host "=== Cleaning all generated files ===" -ForegroundColor Green
+    Write-Host "  Cleaning youtube_automation..."
     Remove-Item -Path "$Root\youtube_automation\youtube_links.txt" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\youtube_automation\downloads" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\youtube_automation\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Host "  Cleaning music_video_generator..."
     Remove-Item -Path "$Root\music_video_generator\output" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\music_video_generator\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\music_video_generator\src\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Host "  Cleaning automatic_YouTube_upload..."
     Remove-Item -Path "$Root\automatic_YouTube_upload\token.pickle" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\automatic_YouTube_upload\*.log" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\automatic_YouTube_upload\*.mp3" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\automatic_YouTube_upload\*.webm" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\automatic_YouTube_upload\*.wav" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\automatic_YouTube_upload\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
     Write-Host "=== All cleaned! ===" -ForegroundColor Green
 }
@@ -68,6 +74,7 @@ function Show-Help {
     Write-Host "  .\run.ps1 setup    - Install all dependencies"
     Write-Host "  .\run.ps1 search   - Search YouTube for song links"
     Write-Host "  .\run.ps1 download - Download MP3 files from links"
+    Write-Host "  .\run.ps1 copy     - Copy downloads to video generator input"
     Write-Host "  .\run.ps1 generate - Create music video from audio + images"
     Write-Host "  .\run.ps1 upload   - Upload video to YouTube"
     Write-Host "  .\run.ps1 all      - Run full pipeline"
