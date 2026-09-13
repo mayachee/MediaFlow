@@ -9,6 +9,10 @@ YELLOW := \033[33m
 BLUE   := \033[34m
 RESET  := \033[0m
 
+# Helper functions for consistent output
+step = @echo "$(BOLD)$(GREEN)>>> $(1)$(RESET)"
+ok = @echo "$(GREEN)OK: $(1)$(RESET)"
+
 # NOTE: On Windows use '.\run.ps1 <target>' instead of make.
 # This Makefile requires GNU Make and Unix-like tools (Linux/macOS/Git Bash).
 
@@ -76,6 +80,8 @@ clean:
 	rm -rf youtube_automation/__pycache__ youtube_automation/downloads
 	@echo "$(YELLOW)  Cleaning music_video_generator...$(RESET)"
 	rm -rf music_video_generator/output music_video_generator/__pycache__ music_video_generator/src/__pycache__
+	rm -f music_video_generator/input/audio/*.mp3 music_video_generator/input/audio/*.webm music_video_generator/input/audio/*.wav
+	rm -f music_video_generator/input/images/* 2>/dev/null || true
 	@echo "$(YELLOW)  Cleaning automatic_YouTube_upload...$(RESET)"
 	rm -f automatic_YouTube_upload/token.pickle automatic_YouTube_upload/*.log
 	rm -rf automatic_YouTube_upload/__pycache__

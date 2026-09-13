@@ -58,6 +58,10 @@ function Invoke-Clean {
     Remove-Item -Path "$Root\music_video_generator\output" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\music_video_generator\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\music_video_generator\src\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\music_video_generator\input\audio\*.webm" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\music_video_generator\input\audio\*.mp3" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\music_video_generator\input\audio\*.wav" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\music_video_generator\input\images\*" -Force -ErrorAction SilentlyContinue
     Write-Host "  Cleaning automatic_YouTube_upload..."
     Remove-Item -Path "$Root\automatic_YouTube_upload\token.pickle" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\automatic_YouTube_upload\*.log" -Force -ErrorAction SilentlyContinue
