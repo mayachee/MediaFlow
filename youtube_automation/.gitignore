@@ -11,6 +11,13 @@ youtube_links.txt
 *.mp3
 *.webm
 *.m4a
+*.wav
+metadata.json
+metadata.txt
+
+# Environment (keep .env.example tracked, ignore actual .env)
+.env
+!.env.example
 
 # OS
 .DS_Store

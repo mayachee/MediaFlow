@@ -1,16 +1,16 @@
 video:
-  width: 1280
-  height: 720
-  fps: 30
-  bitrate: "15M"
+  width: 854
+  height: 480
+  fps: 24
+  bitrate: "8M"
   codec: "libx264"
   preset: "ultrafast"
   pixel_format: "yuv420p"
   audio_codec: "aac"
-  audio_bitrate: "320k"
+  audio_bitrate: "128k"
 
 image:
-  default_duration: 12.0
+  default_duration: 6.0
   zoom_factor: 1.15
   transition_duration: 0.5
   effect: "zoompan"

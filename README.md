@@ -4,8 +4,9 @@ Automated tools for YouTube audio/video workflow:
 
 1. **youtube_automation/** - Searches YouTube and saves links to `youtube_links.txt`
 2. **download_mp3.py** - Downloads audio from those links as MP3/WebM
-3. **music_video_generator/** - Combines audio files + images into a video (FFmpeg + librosa)
-4. **automatic_YouTube_upload/** - Uploads final video to YouTube via Data API v3
+3. **generate_metadata.py** - AI-powered YouTube titles & descriptions (optional)
+4. **music_video_generator/** - Combines audio files + images into a video (FFmpeg + librosa)
+5. **automatic_YouTube_upload/** - Uploads final video to YouTube via Data API v3
 
 ## Quick Start
 
@@ -14,13 +15,13 @@ Automated tools for YouTube audio/video workflow:
 #### Linux/macOS
 ```bash
 make setup                                                                       # Install all dependencies
-make all                                                                         # Search -> Download -> Generate -> Upload
+make all                                                                         # Search -> Download -> Metadata -> Copy -> Generate -> Upload
 ```
 
 #### Windows PowerShell
 ```powershell
 .\run.ps1 setup                                                                  # Install all dependencies
-.\run.ps1 all                                                                    # Search -> Download -> Generate -> Upload
+.\run.ps1 all                                                                    # Search -> Download -> Metadata -> Copy -> Generate -> Upload
 ```
 
 ### Individual steps
@@ -30,9 +31,29 @@ make all                                                                        
 | Setup | `make setup` | `.\run.ps1 setup` |
 | Search YouTube | `make search` | `.\run.ps1 search` |
 | Download audio | `make download` | `.\run.ps1 download` |
+| Download + trim | `make download-trim` | `.\run.ps1 download-trim` |
+| **Generate AI metadata** | `make metadata` | `.\run.ps1 metadata` |
+| Copy downloads | `make copy` | `.\run.ps1 copy` |
 | Generate video | `make generate` | `.\run.ps1 generate` |
 | Upload to YouTube | `make upload` | `.\run.ps1 upload` |
 | Clean outputs | `make clean` | `.\run.ps1 clean` |
+
+### One-command pipeline
+
+```bash
+make full    # Linux/macOS — runs everything with smart fallbacks
+```
+```powershell
+.\run.ps1 full   # Windows — runs everything with smart fallbacks
+```
+
+**`run_all.py`** handles the complete pipeline automatically:
+1. Searches YouTube (falls back to yt-dlp if Playwright fails)
+2. Downloads audio from all links
+3. Generates AI-powered titles/descriptions (`metadata.json`)
+4. Copies audio + downloads thumbnails to video generator
+5. Generates the music video (FFmpeg)
+6. Uploads to YouTube (prompts for OAuth in browser)
 
 ## Setup
 

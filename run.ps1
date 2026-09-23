@@ -1,7 +1,7 @@
-﻿# YouTube Audio/Video Workflow - PowerShell Script
+# YouTube Audio/Video Workflow - PowerShell Script
 param(
     [Parameter(Position=0)]
-    [ValidateSet("setup", "search", "download", "generate", "upload", "all", "clean", "help")]
+    [ValidateSet("setup", "search", "download", "download-trim", "metadata", "copy", "generate", "upload", "batch", "full", "all", "clean", "help")]
     [string]$Target = "help"
 )
 $Root = "C:\Users\Dima D'origine\OneDrive\Bureau\scripts"
@@ -23,14 +23,34 @@ function Invoke-Download {
     Set-Location "$Root\youtube_automation"; python download_mp3.py; Set-Location $Root
 }
 
+function Invoke-DownloadTrim {
+    Write-Host "=== Downloading + trimming silence ===" -ForegroundColor Green
+    Set-Location "$Root\youtube_automation"; python download_mp3.py --trim; Set-Location $Root
+}
+
+function Invoke-Metadata {
+    Write-Host "=== Generating AI metadata ===" -ForegroundColor Green
+    if (-not $env:OPENAI_API_KEY) {
+        Write-Host "WARNING: OPENAI_API_KEY is not set." -ForegroundColor Yellow
+        Write-Host "Get a free key at: https://openrouter.ai/keys" -ForegroundColor Yellow
+    }
+    Set-Location "$Root\youtube_automation"; python generate_metadata.py; Set-Location $Root
+}
+
 function Invoke-Generate {
     Set-Location "$Root\music_video_generator"; python -u main.py; Set-Location $Root
 }
 
 function Invoke-Upload {
+    Write-Host "=== Uploading to YouTube ===" -ForegroundColor Green
     Set-Location "$Root\automatic_YouTube_upload"
-    python -u youtube_uploader.py --video "..\music_video_generator\output\music_video.mp4" --title "My Music Video"
+    python -u youtube_uploader.py --video "..\music_video_generator\output\music_video.mp4" --metadata "..\youtube_automation\metadata.json" --privacy public
     Set-Location $Root
+}
+
+function Invoke-Full {
+    Write-Host "=== Running full pipeline (smart mode) ===" -ForegroundColor Green
+    python run_all.py --max-songs 3
 }
 
 function Invoke-Copy {
@@ -46,7 +66,12 @@ function Invoke-Copy {
     Write-Host "Copied audio files!" -ForegroundColor Green
 }
 
-function Invoke-All { Invoke-Search; Invoke-Download; Invoke-Copy; Invoke-Generate; Invoke-Upload }
+function Invoke-Batch {
+    Write-Host "=== Running 93-Song Batch Pipeline (31 Videos x 3 Songs) ===" -ForegroundColor Green
+    python -u "$Root\batch_pipeline.py"
+}
+
+function Invoke-All { Invoke-Search; Invoke-Download; Invoke-Metadata; Invoke-Copy; Invoke-Generate; Invoke-Upload }
 
 function Invoke-Clean {
     Write-Host "=== Cleaning all generated files ===" -ForegroundColor Green
@@ -54,6 +79,8 @@ function Invoke-Clean {
     Remove-Item -Path "$Root\youtube_automation\youtube_links.txt" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\youtube_automation\downloads" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\youtube_automation\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\youtube_automation\metadata.json" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path "$Root\youtube_automation\metadata.txt" -Force -ErrorAction SilentlyContinue
     Write-Host "  Cleaning music_video_generator..."
     Remove-Item -Path "$Root\music_video_generator\output" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "$Root\music_video_generator\__pycache__" -Recurse -Force -ErrorAction SilentlyContinue
@@ -78,9 +105,13 @@ function Show-Help {
     Write-Host "  .\run.ps1 setup    - Install all dependencies"
     Write-Host "  .\run.ps1 search   - Search YouTube for song links"
     Write-Host "  .\run.ps1 download - Download MP3 files from links"
+    Write-Host "  .\run.ps1 download-trim - Download and trim silence from audio"
+    Write-Host "  .\run.ps1 metadata - Generate AI-powered titles & descriptions"
     Write-Host "  .\run.ps1 copy     - Copy downloads to video generator input"
     Write-Host "  .\run.ps1 generate - Create music video from audio + images"
     Write-Host "  .\run.ps1 upload   - Upload video to YouTube"
+    Write-Host "  .\run.ps1 full     - Run full pipeline with smart fallbacks"
+    Write-Host "  .\run.ps1 batch    - Run 31-video batch pipeline (auto-deletes after upload)"
     Write-Host "  .\run.ps1 all      - Run full pipeline"
     Write-Host "  .\run.ps1 clean    - Remove all generated files"
     Write-Host "  .\run.ps1 help     - Show this help"
@@ -90,8 +121,13 @@ switch ($Target) {
     "setup" { Invoke-Setup }
     "search" { Invoke-Search }
     "download" { Invoke-Download }
+    "download-trim" { Invoke-DownloadTrim }
+    "metadata" { Invoke-Metadata }
+    "copy" { Invoke-Copy }
     "generate" { Invoke-Generate }
     "upload" { Invoke-Upload }
+    "full" { Invoke-Full }
+    "batch" { Invoke-Batch }
     "all" { Invoke-All }
     "clean" { Invoke-Clean }
     "help" { Show-Help }

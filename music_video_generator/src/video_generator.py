@@ -92,35 +92,21 @@ class VideoGenerator:
         temp_img = output_file.with_suffix(".png")
         img.save(temp_img, "PNG", optimize=True)
         
-        # Build FFmpeg command
+        # Build FFmpeg command - optimized for memory efficiency
         duration = scene.duration
-        zoom_factor = self.effects_config.get("ken_burns", {}).get("zoom_factor", 1.15)
-        zoom_in = self.effects_config.get("ken_burns", {}).get("zoom_in", True)
-        
-        # Calculate zoompan parameters
-        total_frames = int(duration * self.fps)
-        
-        # Simplified zoompan for speed
-        # No zoom effect - static image
-        zoompan_filter = (
-            f"zoompan=z=1.0:"
-            f"x='iw/2-(iw/2)':"
-            f"y='ih/2-(ih/2)':"
-            f"d=1:s={self.width}x{self.height}:"
-            f"fps={self.fps}"
-        )
-        
-        # Add fade in/out to the filter
+
+        # Use lightweight filters: fps + fade (zoompan removed for memory efficiency
+        # on long scenes — -loop 1 already repeats the input image)
         fade_filter = (
             f"fade=t=in:st=0:d=0.5,"
             f"fade=t=out:st={max(duration - 0.5, 0)}:d=0.5"
         )
-        
-        filters = [zoompan_filter, fade_filter]
-        
+
+        filters = [f"fps={self.fps}", fade_filter]
+
         combined_filter = ",".join(filters)
-        
-        # Build FFmpeg command - optimized for speed
+
+        # Use -threads 1 to reduce memory pressure
         cmd = [
             self.ffmpeg_path,
             "-loop", "1",
@@ -128,8 +114,9 @@ class VideoGenerator:
             "-vf", combined_filter,
             "-c:v", "libx264",
             "-preset", "ultrafast",
-            "-crf", "23",
+            "-crf", "28",
             "-pix_fmt", "yuv420p",
+            "-threads", "1",
             "-t", str(duration),
             "-y",
             str(output_file),
@@ -195,7 +182,7 @@ class VideoGenerator:
         cmd.extend([
             "-c:v", "libx264",
             "-preset", self.video_config.get("preset", "slow"),
-            "-crf", "18",
+            "-crf", "25",
             "-pix_fmt", "yuv420p",
             "-movflags", "+faststart",
         ])

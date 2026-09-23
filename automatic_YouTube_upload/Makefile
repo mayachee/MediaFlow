@@ -6,13 +6,11 @@ PYTHON = python
 install:
 	$(PYTHON) -m pip install -r requirements.txt
 
-## Upload: Upload a video to YouTube
+## Upload: Upload a video to YouTube (uses AI metadata from metadata.json)
 upload:
 	$(PYTHON) -u youtube_uploader.py \
 		--video ../music_video_generator/output/music_video.mp4 \
-		--title "My Music Video" \
-		--description "Auto-generated music video" \
-		--tags "music,video,lyrics" \
+		--metadata ../youtube_automation/metadata.json \
 		--privacy public
 
 ## Upload-thumbnail: Upload only a thumbnail to an existing video

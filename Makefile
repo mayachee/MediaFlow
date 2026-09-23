@@ -1,4 +1,4 @@
-.PHONY: setup search download generate upload all clean help
+.PHONY: setup search download metadata copy download-trim generate upload all full clean help
 
 PYTHON := python
 
@@ -39,6 +39,18 @@ download:
 	cd youtube_automation && $(PYTHON) download_mp3.py
 	$(call ok,Audio downloads complete)
 
+## Download-trim: Download audio and trim leading/trailing silence
+download-trim:
+	@echo "$(BOLD)$(GREEN)>>> Downloading + trimming silence...$(RESET)"
+	cd youtube_automation && $(PYTHON) download_mp3.py --trim
+	@echo "$(GREEN)OK: audio files trimmed$(RESET)"
+
+## Metadata: Generate AI-powered titles and descriptions from input.txt
+metadata:
+	@echo "$(BOLD)$(GREEN)>>> Generating AI metadata...$(RESET)"
+	cd youtube_automation && $(PYTHON) generate_metadata.py
+	@echo "$(GREEN)OK: metadata.json and metadata.txt created$(RESET)"
+
 ## Copy: Move downloaded audio to music_video_generator input
 copy:
 	$(call step,Copying audio files...)
@@ -59,18 +71,22 @@ upload:
 	@echo "$(BOLD)$(GREEN)>>> Uploading to YouTube...$(RESET)"
 	cd automatic_YouTube_upload && $(PYTHON) -u youtube_uploader.py \
 		--video ../music_video_generator/output/music_video.mp4 \
-		--title "My Music Video" \
-		--description "Auto-generated music video" \
-		--tags "music,video,lyrics" \
+		--metadata ../youtube_automation/metadata.json \
 		--privacy public
 	@echo "$(GREEN)OK: Upload complete$(RESET)"
 
-## All: Full workflow (search -> download -> copy -> generate -> upload)
-all: search download copy generate upload
+## All: Full workflow (search -> download -> metadata -> copy -> generate -> upload)
+all: search download metadata copy generate upload
 	@echo ""
 	@echo "$(BOLD)$(GREEN)=========================================$(RESET)"
 	@echo "$(BOLD)$(GREEN) Full workflow complete! Video uploaded.   $(RESET)"
 	@echo "$(BOLD)$(GREEN)=========================================$(RESET)"
+
+## Full: Smart pipeline with fallbacks (search + download + AI metadata + video + upload)
+full:
+	@echo "$(BOLD)$(GREEN)>>> Running full pipeline with smart fallbacks...$(RESET)"
+	$(PYTHON) run_all.py --max-songs 3
+	@echo "$(GREEN)OK: Pipeline complete!$(RESET)"
 
 ## Clean: Remove all generated files
 clean:
@@ -78,6 +94,7 @@ clean:
 	@echo "$(YELLOW)  Cleaning youtube_automation...$(RESET)"
 	rm -f youtube_automation/youtube_links.txt
 	rm -rf youtube_automation/__pycache__ youtube_automation/downloads
+	rm -f youtube_automation/metadata.json youtube_automation/metadata.txt
 	@echo "$(YELLOW)  Cleaning music_video_generator...$(RESET)"
 	rm -rf music_video_generator/output music_video_generator/__pycache__ music_video_generator/src/__pycache__
 	rm -f music_video_generator/input/audio/*.mp3 music_video_generator/input/audio/*.webm music_video_generator/input/audio/*.wav
@@ -99,9 +116,12 @@ help:
 	@echo "  make setup    - Install all dependencies and check FFmpeg"
 	@echo "  make search   - Search YouTube for song links"
 	@echo "  make download - Download MP3 files from links"
-	@echo "  make copy     - Copy downloads to music_video_generator input"
+	@echo "  make download-trim - Download and trim silence from audio"
+	@echo "  make metadata - Generate AI-powered titles & descriptions"
+	@echo "  make copy     - Copy downloads to video generator input"
 	@echo "  make generate - Create music video from audio + images"
 	@echo "  make upload   - Upload video to YouTube"
-	@echo "  make all      - Run full pipeline (search -> download -> copy -> generate -> upload)"
+	@echo "  make all      - Run full pipeline (search -> download -> metadata -> copy -> generate -> upload)"
+	@echo "  make full     - Smart pipeline with yt-dlp fallbacks (run_all.py)"
 	@echo "  make clean    - Remove all generated files"
 	@echo "  make help     - Show this help message"

@@ -21,7 +21,8 @@ function Install-Dependencies {
 function Upload-Video {
     Write-Host "Uploading video to YouTube..." -ForegroundColor Green
     $video = "..\music_video_generator\output\music_video.mp4"
-    python -u youtube_uploader.py --video $video --title "My Music Video" --description "Auto-generated music video" --tags "music,video,lyrics" --privacy public
+    $metadata = "..\youtube_automation\metadata.json"
+    python -u youtube_uploader.py --video $video --metadata $metadata --privacy public
 }
 
 function Upload-Thumbnail {
