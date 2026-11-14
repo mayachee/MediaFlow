@@ -1,0 +1,65 @@
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  bitrate: "12M"
+  codec: "libx264"
+  preset: "fast"
+  crf: 20
+  pixel_format: "yuv420p"
+  audio_codec: "aac"
+  audio_bitrate: "256k"
+
+image:
+  motion: "alternate"       # still, zoom_in/out, pan_left/right/up/down, alternate
+  framing: "fill"           # fill crops; fit keeps the full image with letterboxing
+  supersample: 2            # smoother image motion; 1 uses less memory
+  enhance: false            # preserve the supplied artwork's colors by default
+  default_duration: 6.0
+  zoom_factor: 1.15
+  transition_duration: 0.5
+  effect: "zoompan"
+
+beat_detection:
+  enabled: true
+  method: "librosa"
+  hop_length: 512
+  backtrack: true
+  trim: true
+
+direction:
+  enabled: true
+  edit_mode: montage        # varied shot sizes and scene-specific cuts; classic keeps long shots
+  style: cinematic           # cinematic, balanced, energetic
+  beat_accents: false         # clean edits first; enable only when camera pulses suit the music
+  follow_style_transitions: true
+  focal_points:
+    Gemini_Generated_Image_n8s12tn8s12tn8s1.jpg: [0.77, 0.75]
+    Gemini_Generated_Image_sen0c0sen0c0sen0.jpg: [0.60, 0.50]
+    Gemini_Generated_Image_yzwk57yzwk57yzwk.jpg: [0.50, 0.70]
+
+audio:
+  format: "mp3"
+  bitrate: "320k"
+
+playlist:
+  enabled: true
+  crossfade_duration: 0.0
+  sort_by: "name"
+
+paths:
+  input_images: "input/images"
+  input_audio: "input/audio"
+  output: "output"
+
+effects:
+  ken_burns:
+    enabled: true
+    zoom_in: true
+    zoom_speed: 0.02
+
+  transitions:
+    enabled: true
+    type: "crossfade"       # crossfade blends scenes; fade goes through black; cut has no blend
+    duration: 0.5
+    maximum_inputs: 6         # batch long edits instead of opening every scene at once

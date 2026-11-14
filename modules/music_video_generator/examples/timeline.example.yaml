@@ -1,0 +1,17 @@
+# Replace source paths with your own files; paths are relative to this YAML.
+# Select audio whose duration is at least 8 seconds; the last scene fills the rest.
+scenes:
+  - source: ../input/images/cover-1.jpg
+    duration: 4
+    motion: zoom_in
+    framing: fill
+
+  - source: ../input/images/cover-2.jpg
+    duration: 4
+    motion: pan_right
+    framing: fill
+
+  - source: ../input/images/portrait.jpg
+    duration: auto
+    motion: still
+    framing: fit

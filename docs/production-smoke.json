@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "case": "normalization_off_preserves_samples",
+      "status": "passed"
+    },
+    {
+      "case": "peak_normalization_preserves_relative_dynamics",
+      "status": "passed"
+    },
+    {
+      "case": "gain_only_loudness_target",
+      "status": "passed"
+    },
+    {
+      "case": "explicit_two_pass_loudness_mode",
+      "status": "passed",
+      "processing_type": "linear"
+    },
+    {
+      "case": "reference_difference_and_matched_listening",
+      "status": "passed"
+    },
+    {
+      "case": "master_preset_without_artwork",
+      "status": "passed",
+      "job": "runs\\20261112-030036-4c12aeb6"
+    },
+    {
+      "case": "preview_range_and_preset",
+      "status": "passed",
+      "job": "runs\\20261112-030042-8e18bc5a"
+    },
+    {
+      "case": "video_preset_normalized_playlist",
+      "status": "passed",
+      "job": "runs\\20261112-030112-a328a0f2"
+    }
+  ],
+  "fixtures": "runs\\production-check\\96c5561c",
+  "scope": "Real synthetic local audio/video; no external downloads or uploads"
+}

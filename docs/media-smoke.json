@@ -1,0 +1,112 @@
+{
+  "cases": [
+    {
+      "case": "two_tracks_original",
+      "job": "runs\\20261112-163339-04dcaaf2",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 2.4,
+        "video_duration": 2.416667,
+        "audio_duration": 2.4,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 69668
+      }
+    },
+    {
+      "case": "two_tracks_slow",
+      "job": "runs\\20261112-163343-4cc73d02",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 4.764127,
+        "video_duration": 4.75,
+        "audio_duration": 4.763991,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 135288
+      }
+    },
+    {
+      "case": "two_tracks_reverse",
+      "job": "runs\\20261112-163347-5dae3589",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 2.4,
+        "video_duration": 2.416667,
+        "audio_duration": 2.4,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 70225
+      }
+    },
+    {
+      "case": "one_track_three_images",
+      "job": "runs\\20261112-163350-ed98ae4e",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 1.2,
+        "video_duration": 1.25,
+        "audio_duration": 1.2,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 37804
+      }
+    },
+    {
+      "case": "full_hd_with_motion",
+      "job": "runs\\20261112-163352-f930f24d",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 1.2,
+        "video_duration": 1.2,
+        "audio_duration": 1.2,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 57567
+      }
+    },
+    {
+      "case": "batch_adapter_two_tracks",
+      "decode": "passed",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 2.4,
+        "video_duration": 2.416667,
+        "audio_duration": 2.4,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 69668
+      }
+    },
+    {
+      "case": "real_beat_detection",
+      "duration": 8.0,
+      "beats": 15,
+      "tempo": 117.45383522727273
+    }
+  ],
+  "scope": "synthetic local media; no service calls"
+}

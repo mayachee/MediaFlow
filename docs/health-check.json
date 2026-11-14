@@ -1,0 +1,438 @@
+{
+  "checked_at_utc": "2026-11-12T14:41:37.258555+00:00",
+  "python": "C:\\Users\\Dima D'origine\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+  "scope": "syntax, package presence, executable versions, local environment launch; no services or project execution",
+  "syntax": [
+    {
+      "file": "workflow.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/__init__.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_YouTube_upload/youtube_uploader.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/check_bytes.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/check_cookies.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/check_pinterest_cookies.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/complete_upload.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/copy_cookies.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/debug_cookies.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/decrypt_cookies_aes.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/direct_upload.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/download_mp3.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_and_test.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_cookies.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_cookies_headless.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_cookies_playwright.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_cookies_proper.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/extract_oauth_token.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/find_links.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/generate_metadata.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/main.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/pinterest_upload_manual.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/pinterest_uploader.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/automatic_upload/quick_pinterest_upload.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/main.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/__init__.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/audio_analyzer.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/image_processor.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/timeline.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/utils.py",
+      "status": "pass"
+    },
+    {
+      "file": "modules/music_video_generator/src/video_generator.py",
+      "status": "pass"
+    },
+    {
+      "file": "pipelines/__init__.py",
+      "status": "pass"
+    },
+    {
+      "file": "pipelines/audio_production.py",
+      "status": "pass"
+    },
+    {
+      "file": "pipelines/batch_pipeline.py",
+      "status": "pass"
+    },
+    {
+      "file": "pipelines/media_quality.py",
+      "status": "pass"
+    },
+    {
+      "file": "pipelines/run_all.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/analyze_orchestrated_midi.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/check_midi_tempo.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/create_full_production.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/generate_audio.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/generate_pdf.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/generate_sheet_music.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/generate_vocals.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/soudeni_piano_cover.py",
+      "status": "pass"
+    },
+    {
+      "file": "projects/soudeni/soudeni_piano_cover_analysis.py",
+      "status": "pass"
+    },
+    {
+      "file": "tests/test_audio_production.py",
+      "status": "pass"
+    },
+    {
+      "file": "tests/test_media_contracts.py",
+      "status": "pass"
+    },
+    {
+      "file": "tests/test_video_editing.py",
+      "status": "pass"
+    },
+    {
+      "file": "tests/test_workflow.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/audio_quality.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/check_synth.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/compare_audio.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/demo_production.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/doctor.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/smoke_media.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/smoke_production.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/smoke_video_editing.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/legacy/check_fluidsynth.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/legacy/download_soundfont.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/legacy/test_fluidsynth.py",
+      "status": "pass"
+    },
+    {
+      "file": "tools/personal/browser_login.py",
+      "status": "pass"
+    }
+  ],
+  "powershell_syntax": [
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "run.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/automatic_YouTube_upload/run.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/automatic_upload/run.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/music_video_generator/run.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/vocal-remover/run.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/vocal-remover/scripts/remove_vocals.ps1"
+    },
+    {
+      "status": "pass",
+      "errors": [],
+      "file": "modules/vocal-remover/scripts/remove_vocals_local.ps1"
+    }
+  ],
+  "packages": {
+    "numpy": {
+      "available": true,
+      "version": "2.4.6"
+    },
+    "PIL": {
+      "available": true,
+      "version": "10.4.0"
+    },
+    "yaml": {
+      "available": true,
+      "version": "6.0.3"
+    },
+    "librosa": {
+      "available": true,
+      "version": "0.11.0"
+    },
+    "soundfile": {
+      "available": true,
+      "version": "0.14.0"
+    },
+    "yt_dlp": {
+      "available": true,
+      "version": "2026.8.19"
+    },
+    "playwright": {
+      "available": true,
+      "version": "1.62.0"
+    },
+    "googleapiclient": {
+      "available": true,
+      "version": "2.200.0"
+    },
+    "google_auth_oauthlib": {
+      "available": true,
+      "version": "1.4.1"
+    },
+    "midiutil": {
+      "available": true,
+      "version": "1.2.1"
+    },
+    "scipy": {
+      "available": true,
+      "version": "1.17.1"
+    },
+    "reportlab": {
+      "available": true,
+      "version": "5.0.1"
+    },
+    "music21": {
+      "available": true,
+      "version": "10.5.0"
+    },
+    "gtts": {
+      "available": true,
+      "version": "2.5.4"
+    },
+    "pydub": {
+      "available": true,
+      "version": "0.25.1"
+    },
+    "requests": {
+      "available": true,
+      "version": "2.34.2"
+    },
+    "mido": {
+      "available": true,
+      "version": "1.3.3"
+    }
+  },
+  "commands": {
+    "ffmpeg": {
+      "path": "C:\\Program Files\\DownloadHelper CoApp\\ffmpeg.EXE",
+      "returncode": 0,
+      "version": [
+        "ffmpeg version n6.0 Copyright (c) 2000-2023 the FFmpeg developers"
+      ]
+    },
+    "ffprobe": {
+      "path": "C:\\Program Files\\DownloadHelper CoApp\\ffprobe.EXE",
+      "returncode": 0,
+      "version": [
+        "ffprobe version n6.0 Copyright (c) 2007-2023 the FFmpeg developers"
+      ]
+    },
+    "node": {
+      "path": "C:\\Program Files\\nodejs\\node.EXE",
+      "returncode": 0,
+      "version": [
+        "v22.17.0"
+      ]
+    }
+  },
+  "dependency_check": {
+    "returncode": 1,
+    "details": [
+      "gradio 3.39.0 has requirement numpy~=1.0, but you have numpy 2.4.6.",
+      "gradio 3.39.0 has requirement pandas<3.0,>=1.0, but you have pandas 3.0.6.",
+      "gradio 3.39.0 has requirement websockets<12.0,>=10.0, but you have websockets 12.0.",
+      "gradio-client 0.3.0 has requirement websockets<12.0,>=10.0, but you have websockets 12.0.",
+      "matplotlib 3.7.2 has requirement pyparsing<3.1,>=2.3.1, but you have pyparsing 3.3.3."
+    ]
+  },
+  "environments": {
+    "music_video_generator": {
+      "returncode": 0,
+      "packages": {
+        "numpy": true,
+        "librosa": true,
+        "torch": false,
+        "demucs": false,
+        "yaml": true,
+        "soundfile": true
+      },
+      "interpreter_usable": true
+    },
+    "vocal-remover": {
+      "returncode": 0,
+      "packages": {
+        "numpy": true,
+        "librosa": false,
+        "torch": true,
+        "demucs": true,
+        "yaml": true,
+        "soundfile": false
+      },
+      "interpreter_usable": true,
+      "demucs_runtime": {
+        "status": "fail",
+        "returncode": 1,
+        "error": "OSError: [WinError 126] The specified module could not be found. Error loading \"C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\modules\\vocal-remover\\.venv\\Lib\\site-packages\\torch\\lib\\shm.dll\" or one of its dependencies."
+      }
+    },
+    "automatic_upload": {
+      "usable": false,
+      "reason": "no local environment"
+    }
+  },
+  "source_counts": {
+    "(root)": 2,
+    "modules": 36,
+    "pipelines": 5,
+    "projects": 9,
+    "tests": 4,
+    "tools": 12
+  },
+  "assets": {
+    "assets/soundfonts/SoundFont.sf2": true,
+    "vendor/fluidsynth-bin/fluidsynth-v2.6.1-win10-x64-cpp11/bin/fluidsynth.exe": true
+  }
+}

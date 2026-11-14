@@ -1,6 +1,0 @@
-playwright
-pytube
-yt-dlp>=2024.8.19
-requests
-librosa
-soundfile

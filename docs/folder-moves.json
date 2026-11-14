@@ -1,0 +1,138 @@
+﻿{
+    "date":  "2026-11-12T02:36:38.4044627+01:00",
+    "moves":  [
+                  {
+                      "to":  "modules/automatic_upload",
+                      "from":  "automatic_upload"
+                  },
+                  {
+                      "to":  "modules/automatic_YouTube_upload",
+                      "from":  "automatic_YouTube_upload"
+                  },
+                  {
+                      "to":  "modules/music_video_generator",
+                      "from":  "music_video_generator"
+                  },
+                  {
+                      "to":  "modules/vocal-remover",
+                      "from":  "vocal-remover"
+                  },
+                  {
+                      "to":  "pipelines/batch_pipeline.py",
+                      "from":  "batch_pipeline.py"
+                  },
+                  {
+                      "to":  "pipelines/run_all.py",
+                      "from":  "run_all.py"
+                  },
+                  {
+                      "to":  "pipelines/media_quality.py",
+                      "from":  "media_quality.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/soudeni_piano_cover.py",
+                      "from":  "soudeni_piano_cover.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/soudeni_piano_cover_analysis.py",
+                      "from":  "soudeni_piano_cover_analysis.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/create_full_production.py",
+                      "from":  "create_full_production.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/generate_audio.py",
+                      "from":  "generate_audio.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/generate_pdf.py",
+                      "from":  "generate_pdf.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/generate_sheet_music.py",
+                      "from":  "generate_sheet_music.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/generate_vocals.py",
+                      "from":  "generate_vocals.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/analyze_orchestrated_midi.py",
+                      "from":  "analyze_orchestrated_midi.py"
+                  },
+                  {
+                      "to":  "projects/soudeni/check_midi_tempo.py",
+                      "from":  "check_midi_tempo.py"
+                  },
+                  {
+                      "to":  "tools/personal/browser_login.py",
+                      "from":  "file.py"
+                  },
+                  {
+                      "to":  "tools/legacy/check_fluidsynth.py",
+                      "from":  "check_fluidsynth.py"
+                  },
+                  {
+                      "to":  "tools/legacy/test_fluidsynth.py",
+                      "from":  "test_fluidsynth.py"
+                  },
+                  {
+                      "to":  "tools/legacy/download_soundfont.py",
+                      "from":  "download_soundfont.py"
+                  },
+                  {
+                      "to":  "tests/test_workflow.py",
+                      "from":  "test_workflow.py"
+                  },
+                  {
+                      "to":  "requirements/workflow.txt",
+                      "from":  "requirements-workflow.txt"
+                  },
+                  {
+                      "to":  "requirements/production.txt",
+                      "from":  "requirements-production.txt"
+                  },
+                  {
+                      "to":  "assets/soundfonts/SoundFont.sf2",
+                      "from":  "SoundFont.sf2"
+                  },
+                  {
+                      "to":  "vendor/fluidsynth-bin",
+                      "from":  "fluidsynth-bin"
+                  },
+                  {
+                      "to":  "vendor/archives/fluidsynth-win.zip",
+                      "from":  "fluidsynth-win.zip"
+                  },
+                  {
+                      "to":  "vendor/javascript/package.json",
+                      "from":  "package.json"
+                  },
+                  {
+                      "to":  "vendor/javascript/package-lock.json",
+                      "from":  "package-lock.json"
+                  },
+                  {
+                      "to":  "vendor/javascript/node_modules",
+                      "from":  "node_modules"
+                  },
+                  {
+                      "to":  "docs/diagrams/mermaid-diagram.png",
+                      "from":  "mermaid-diagram.png"
+                  },
+                  {
+                      "to":  "docs/diagrams/mermaid-diagram.svg",
+                      "from":  "mermaid-diagram.svg"
+                  },
+                  {
+                      "to":  "docs/diagrams/mermaid-diagram1.png",
+                      "from":  "mermaid-diagram1.png"
+                  },
+                  {
+                      "to":  "config/credentials/client_secret.json",
+                      "from":  "client_secret.json"
+                  }
+              ],
+    "note":  "Only paths listed here were relocated. Existing media under runs was preserved."
+}

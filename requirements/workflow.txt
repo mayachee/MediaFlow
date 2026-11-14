@@ -1,0 +1,15 @@
+# Direct dependency snapshot from the audited Python 3.11 environment.
+# Not a complete transitive lock; FFmpeg/ffprobe are separate executables.
+numpy==2.4.6
+Pillow==10.4.0
+PyYAML==6.0.3
+librosa==0.11.0
+soundfile==0.14.0
+scipy==1.17.1
+yt-dlp==2026.8.19
+requests==2.34.2
+playwright==1.62.0
+google-api-python-client==2.200.0
+google-auth==2.58.0
+google-auth-oauthlib==1.4.1
+google-auth-httplib2==0.4.2

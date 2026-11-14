@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "case": "true_blend_without_shortening",
+      "video": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\video-editing-demo\\1f03abc6\\true-crossfade.mp4",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 8.0,
+        "video_duration": 8.0,
+        "audio_duration": 8.0,
+        "width": 320,
+        "height": 180,
+        "fps": 24.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 138414
+      },
+      "boundary_rgb": [
+        124.0,
+        0.0,
+        125.0
+      ]
+    },
+    {
+      "case": "mapped_zoom_pan_fit_and_looped_clip",
+      "video": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\20261112-163345-a10fba0f\\video\\music_video.mp4",
+      "scene_plan": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\20261112-163345-a10fba0f\\video\\scene-plan.json"
+    },
+    {
+      "case": "preview_crops_audio_and_visual_mapping",
+      "video": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\20261112-163353-c9e80a48\\video\\music_video.mp4"
+    },
+    {
+      "case": "1080p_odd_frame_crossfade",
+      "video": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\video-editing-demo\\1f03abc6\\1080p-crossfade.mp4",
+      "quality": {
+        "status": "passed",
+        "expected_duration": 4.0,
+        "video_duration": 4.0,
+        "audio_duration": 4.0,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30.0,
+        "video_codec": "h264",
+        "audio_codec": "aac",
+        "bytes": 125778
+      }
+    }
+  ],
+  "timeline": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\video-editing-demo\\1f03abc6\\timeline.yaml",
+  "config": "C:\\Users\\Dima D'origine\\OneDrive\\Bureau\\scripts\\runs\\video-editing-demo\\1f03abc6\\config.yaml"
+}

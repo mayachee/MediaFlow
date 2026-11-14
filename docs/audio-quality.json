@@ -1,0 +1,50 @@
+{
+  "measurements": [
+    {
+      "file": "violin-remix/output/Aya_Moghraman_pro_instrumental.wav",
+      "duration_seconds": 256.33843537414964,
+      "sample_rate": 44100,
+      "channels": 2,
+      "subtype": "PCM_24",
+      "peak_dbfs": -2.7697989169930337,
+      "rms_dbfs": -20.22517631392877,
+      "near_full_scale_samples": 0,
+      "sample_count": 22609050,
+      "integrated_lufs": "-16.05",
+      "true_peak_dbtp": "-1.64",
+      "loudness_range_lu": "13.40",
+      "review_notes": []
+    },
+    {
+      "file": "violin-remix/output/Aya_Moghraman_rhodes_instrumental.wav",
+      "duration_seconds": 256.33843537414964,
+      "sample_rate": 44100,
+      "channels": 2,
+      "subtype": "PCM_24",
+      "peak_dbfs": -1.6958230348700218,
+      "rms_dbfs": -19.133392992726534,
+      "near_full_scale_samples": 0,
+      "sample_count": 22609050,
+      "integrated_lufs": "-15.91",
+      "true_peak_dbtp": "-1.04",
+      "loudness_range_lu": "13.40",
+      "review_notes": []
+    },
+    {
+      "file": "violin-remix/output/pro_instrumental_premaster.wav",
+      "duration_seconds": 256.33843537414964,
+      "sample_rate": 44100,
+      "channels": 2,
+      "subtype": "PCM_16",
+      "peak_dbfs": -2.2958217038948883,
+      "rms_dbfs": -19.73338648569145,
+      "near_full_scale_samples": 0,
+      "sample_count": 22609050,
+      "integrated_lufs": "-16.51",
+      "true_peak_dbtp": "-1.61",
+      "loudness_range_lu": "13.40",
+      "review_notes": []
+    }
+  ],
+  "scope": "full-file sample statistics and FFmpeg loudness measurement; does not judge musical performance"
+}

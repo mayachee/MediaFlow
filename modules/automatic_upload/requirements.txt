@@ -1,0 +1,18 @@
+# YouTube Automation core
+playwright
+pytube
+yt-dlp>=2024.8.19
+requests
+librosa
+soundfile
+
+# YouTube Data API (OAuth2 + API calls)
+google-api-python-client
+google-auth
+google-auth-oauthlib
+
+# Video frame extraction & image processing
+opencv-python
+Pillow
+imagehash
+numpy

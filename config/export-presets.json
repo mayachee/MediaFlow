@@ -1,0 +1,20 @@
+{
+  "preview": {
+    "description": "Short local review video; never uploaded by the workflow",
+    "seconds": 30,
+    "sample_rate": 48000,
+    "wav_format": "24",
+    "video": {"width": 854, "height": 480, "fps": 24, "crf": 26, "preset": "fast", "audio_bitrate": "160k"}
+  },
+  "master": {
+    "description": "Editable lossless WAV; no artwork or video required",
+    "sample_rate": 48000,
+    "wav_format": "24"
+  },
+  "video": {
+    "description": "Full-resolution H.264/AAC video and a retained WAV master",
+    "sample_rate": 48000,
+    "wav_format": "24",
+    "video": {"width": 1920, "height": 1080, "fps": 30, "crf": 20, "preset": "fast", "audio_bitrate": "256k"}
+  }
+}

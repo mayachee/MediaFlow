@@ -1,0 +1,13 @@
+# Optional dependencies for the song-specific scripts at the repository root.
+# Core video dependencies remain in music_video_generator/requirements.txt.
+numpy
+scipy
+MIDIUtil
+mido
+music21
+reportlab
+gTTS
+pydub
+librosa
+soundfile
+pyfluidsynth
