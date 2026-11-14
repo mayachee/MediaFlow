@@ -1,5 +1,39 @@
 # Find online clips for a song
 
+## Find and download from a title or keywords
+
+In **Scripts Studio**, click **Find & download clips** in the left sidebar or
+the home screen's clip card. Enter a video idea, title, or keywords, choose the
+number of clips, and click **Find & download**. For example:
+`ocean waves at sunset` or `cinematic forest mountains sunrise`.
+No audio file is required. Audio filename context and extra search settings are
+optional under **Advanced settings**.
+
+Studio searches and ranks candidates, automatically downloads the requested
+number where possible, and tries other ranked candidates if a source fails.
+Downloaded results appear with video previews. Click **Use clips in a music
+video** to select the downloaded visuals in the creator, then add your audio.
+The same button is available when reopening the job from Activity & results.
+
+Each job has a `visuals/` folder ready for the renderer, including when original
+videos were reused from the library cache. Originals remain in the shared
+library. Full candidate videos are downloaded, rather than automatically chosen
+highlight ranges. Matches use metadata and your words; review the actual scenes
+before rendering. A partial download retains the clips that succeeded and
+records the shortfall and source errors in `candidates.json`.
+
+CLI equivalent:
+
+```powershell
+python modules/clip_finder/find_matching_clips.py --title "cinematic forest mountains sunrise" --download-top 3 --download-mode best-available --count 12
+```
+
+For a shortlist without downloading:
+
+```powershell
+python modules/clip_finder/find_matching_clips.py --keywords "sports cars drifting footage"
+```
+
 `find_matching_clips.py` searches YouTube and saves a ranked shortlist. It uses
 the song filename as context or, preferably, your visual story keywords. It
 does not upload the song or require a YouTube account/API key.
@@ -20,7 +54,7 @@ From the **repository root**, use `mingw32-make` on this Windows installation
 ```powershell
 mingw32-make clips-help
 mingw32-make clips-test
-mingw32-make clips-search "AUDIO=modules/music_video_generator/input/audio/my song.mp3" "KEYWORDS=Batman Gotham cinematic scenes"
+mingw32-make clips-search "AUDIO=modules/music_video_generator/input/audio/my song.mp3" "KEYWORDS=forest mountains sunrise footage"
 mingw32-make clips-download "REPORT=modules/clip_finder/output/search/RESULT/candidates.json" "RANKS=1 3"
 mingw32-make clips-list
 mingw32-make clips-highlight ASSET=ASSET_ID START=128 END=133 "TAGS=opening landscape"
@@ -53,7 +87,7 @@ From this module folder:
 
 ```powershell
 py -3.11 -m pip install -r requirements.txt
-.\run.ps1 search -Audio "../music_video_generator/input/audio/my-song.mp3" -Keywords "Batman Gotham resilience"
+.\run.ps1 search -Audio "../music_video_generator/input/audio/my-song.mp3" -Keywords "nature forests mountains"
 ```
 
 Results go into a new `output/search/<timestamp>/` directory:
@@ -65,7 +99,7 @@ Results go into a new `output/search/<timestamp>/` directory:
 For more precise scene searches, repeat `--query` with the direct Python command:
 
 ```powershell
-py -3.11 find_matching_clips.py --audio "../music_video_generator/input/audio/my-song.mp3" --keywords "Batman Gotham" --query "Batman rooftop Gotham scene" --query "Batman climbing pit scene" --count 10
+py -3.11 find_matching_clips.py --audio "../music_video_generator/input/audio/my-song.mp3" --keywords "nature forests" --query "forest waterfall drone footage" --query "mountain sunrise landscape footage" --count 10
 ```
 
 Candidates are deduplicated by video ID, filtered by duration (12–600 seconds by
@@ -86,7 +120,7 @@ have selected suitable visual sources.
 
 ```powershell
 # Opt in to downloading the top two candidates, at up to 720p
-.\run.ps1 search -Audio "../music_video_generator/input/audio/my-song.mp3" -Keywords "Batman Gotham" -DownloadTop 2
+.\run.ps1 search -Audio "../music_video_generator/input/audio/my-song.mp3" -Keywords "nature forests" -DownloadTop 2
 
 # Use that result's actual clips folder in the renderer
 .\..\music_video_generator\run.ps1 preview -Audio "input/audio/my-song.mp3" -Visuals "../clip_finder/output/search/RESULT/clips" -PreviewStart 0 -PreviewSeconds 30

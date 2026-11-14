@@ -75,6 +75,51 @@ class StudioState:
                         continue
         return list(result.values())
 
+    def _clip_report(self, lines):
+        for line in reversed(lines):
+            clean = ANSI.sub('', line).strip()
+            if not clean.startswith('Clip report: '):
+                continue
+            try:
+                path = Path(clean.removeprefix('Clip report: ')).resolve()
+                path.relative_to(self.root)
+                if path.name != 'candidates.json' or path.stat().st_size > 5_000_000:
+                    continue
+                report = json.loads(path.read_text(encoding='utf-8'))
+                candidates = {row['id']: row for row in report.get('candidates', []) if isinstance(row, dict) and 'id' in row}
+                clips, failures = [], []
+                for item in report.get('downloads', []):
+                    if not isinstance(item, dict):
+                        continue
+                    candidate = candidates.get(item.get('id'), {})
+                    title = candidate.get('title') or item.get('id', 'Clip')
+                    if item.get('error'):
+                        failures.append(dict(title=title, error=str(item['error'])[:1000]))
+                        continue
+                    source = Path(item.get('visual_file') or item.get('file', '')).resolve()
+                    relative = source.relative_to(self.root).as_posix()
+                    if not source.is_file() or source.suffix.lower() not in {'.mp4', '.webm', '.mkv'}:
+                        continue
+                    preview = None
+                    if source.suffix.lower() in {'.mp4', '.webm'}:
+                        self.allowed_media.add(relative)
+                        preview = relative
+                    clips.append(dict(title=title, file=str(source), preview=preview,
+                                      asset_id=item.get('asset_id'), cached=bool(item.get('cached'))))
+                visuals = None
+                if report.get('visuals_folder'):
+                    folder = Path(report['visuals_folder']).resolve()
+                    folder.relative_to(self.root)
+                    if folder.is_dir():
+                        visuals = str(folder)
+                return dict(title=report.get('title') or report.get('keywords'),
+                            keywords=report.get('keywords'), requested=report.get('requested_downloads', 0),
+                            clips=clips, failures=failures, visuals_folder=visuals, report=str(path),
+                            candidates=len(candidates), audio=report.get('audio'))
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+        return None
+
     def start(self, data):
         with self.lock:
             if self.current and self.current['status'] in {'running', 'stopping'}:
@@ -95,6 +140,9 @@ class StudioState:
                     existing = {item['path']: item for item in self.current['artifacts']}
                     existing.update({item['path']: item for item in artifacts})
                     self.current['artifacts'] = list(existing.values())
+                    clip_report = self._clip_report([line])
+                    if clip_report:
+                        self.current['clip_report'] = clip_report
             def worker():
                 try:
                     result = job.run(line_received)
@@ -133,8 +181,9 @@ class StudioState:
                 text = stream.read().decode('utf-8', errors='replace')
         with self.lock:
             artifacts = self._artifacts(text.splitlines())
+            clips = self._clip_report(text.splitlines())
         return dict(id=job_id, title=document.get('title', 'Script job'), status=document['status'],
-                    command=document['command'], folder=str(folder), log=ANSI.sub('', text), artifacts=artifacts)
+                    command=document['command'], folder=str(folder), log=ANSI.sub('', text), artifacts=artifacts, clip_report=clips)
 
     def history(self):
         result = []

@@ -3,8 +3,10 @@ import argparse
 from datetime import datetime
 import json
 import math
+import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import unicodedata
@@ -67,7 +69,8 @@ def search(queries, per_query):
 
 def save_report(folder, report):
     (folder / 'candidates.json').write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding='utf-8')
-    lines = ['# Online clip shortlist', '', f'Audio: `{report["audio"]}`',
+    lines = ['# Online clip shortlist', '', f'Title / idea: {report.get("title") or report["keywords"]}',
+             f'Audio: `{report["audio"] or "not supplied"}`',
              f'Keywords: {report["keywords"]}', f'Mood: {report["mood"]}', '',
              'Matches use metadata keywords and duration. No frames or lyrics were analyzed, and music synchronization is not certified.', '',
              '| Rank | Candidate | Length | Why selected |', '|---|---|---:|---|']
@@ -81,20 +84,28 @@ def save_report(folder, report):
     if report['search_errors']:
         lines += ['', 'Some queries failed; see `candidates.json` for details.']
     if report.get('downloads'):
+        if report.get('visuals_folder'):
+            lines += ['', f'Ready-to-use visuals folder: `{report["visuals_folder"]}`']
         lines += ['', 'Downloaded selections:']
         for item in report['downloads']:
             lines.append(f'- Asset `{item.get("asset_id", "unavailable")}`: {item.get("file", item.get("error", "Download failed"))}')
     (folder / 'README.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
 
-def download_selected(candidates, count, folder, library_folder=None):
+def download_selected(candidates, count, folder, library_folder=None, try_alternates=False):
     import yt_dlp
-    from clip_library import ClipLibrary, DEFAULT_LIBRARY
+    try:
+        from .clip_library import ClipLibrary, DEFAULT_LIBRARY
+    except ImportError:
+        from clip_library import ClipLibrary, DEFAULT_LIBRARY
     library = ClipLibrary(library_folder or DEFAULT_LIBRARY)
     clips = folder / 'clips'
     clips.mkdir()
     results = []
-    for candidate in candidates[:count]:
+    choices = candidates if try_alternates else candidates[:count]
+    for candidate in choices:
+        if sum('file' in item and 'error' not in item for item in results) >= count:
+            break
         try:
             cached = library.cached_source(candidate['url'])
             if cached:
@@ -120,10 +131,32 @@ def download_selected(candidates, count, folder, library_folder=None):
     return results
 
 
-def main():
+def prepare_visuals(downloads, folder):
+    """Create a renderer-ready folder, including cached library downloads."""
+    visuals = folder / 'visuals'
+    visuals.mkdir()
+    for index, item in enumerate(downloads, 1):
+        if 'error' in item or not item.get('file'):
+            continue
+        source = Path(item['file']).resolve()
+        if not source.is_file():
+            raise ValueError('A downloaded library file is missing.')
+        if not re.fullmatch(r'[A-Za-z0-9_-]{11}', item['id']):
+            raise ValueError('Invalid video ID in downloaded result.')
+        target = visuals / f'{index:02d}_{item["id"]}{source.suffix}'
+        try:
+            os.link(source, target)
+        except OSError:
+            shutil.copy2(source, target)
+        item['visual_file'] = str(target)
+    return visuals
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--audio', type=Path, required=True, help='Song used as the search context; not uploaded')
-    parser.add_argument('--keywords', help='Visual topic/story, e.g. Batman Gotham resilience; inferred from filename if omitted')
+    parser.add_argument('--audio', type=Path, help='Optional song filename context; not uploaded')
+    parser.add_argument('--title', help='Video idea/title to find matching footage for; audio is optional')
+    parser.add_argument('--keywords', help='Any visual topic/story, e.g. ocean waves sunset or sports cars; inferred from filename if omitted')
     parser.add_argument('--mood', default='cinematic', help='Search wording, not an inferred emotion')
     parser.add_argument('--query', action='append', help='Exact search query; repeat to search several scenes')
     parser.add_argument('--count', type=int, default=10, help='Maximum ranked candidates saved')
@@ -132,17 +165,25 @@ def main():
     parser.add_argument('--max-seconds', type=float, default=600)
     parser.add_argument('--output', type=Path, help='New result directory; default unique output/search folder')
     parser.add_argument('--download-top', type=int, default=0, help='Explicitly download this many top candidates for local review')
+    parser.add_argument('--download-mode', choices=['top-only', 'best-available'], default='top-only',
+                        help='best-available tries lower-ranked matches when a download fails')
     parser.add_argument('--library', type=Path, help='Shared local video library; default this module/library')
-    args = parser.parse_args()
-    if not args.audio.is_file():
+    args = parser.parse_args(argv)
+    if args.audio and not args.audio.is_file():
         parser.error('--audio must be an existing file')
     if not 1 <= args.count <= 50 or not 1 <= args.per_query <= 30 or not 0 <= args.download_top <= args.count:
         parser.error('Use count 1–50, per-query 1–30, and download-top between zero and count')
     if not math.isfinite(args.min_seconds) or not math.isfinite(args.max_seconds) or not 0 < args.min_seconds <= args.max_seconds:
         parser.error('Duration limits must be positive, finite, and ordered')
-    keywords = args.keywords or ' '.join(dict.fromkeys(words(args.audio.stem)))
+    if args.download_mode == 'best-available' and args.download_top < 1:
+        parser.error('Automatic download mode requires --download-top of at least one')
+    keywords = ' '.join(part.strip() for part in [args.title, args.keywords] if part and part.strip())
+    if not keywords and args.audio:
+        keywords = ' '.join(dict.fromkeys(words(args.audio.stem)))
+    if not keywords and args.query:
+        keywords = ' '.join(args.query)
     if not words(keywords):
-        parser.error('Supply useful --keywords for this audio file')
+        parser.error('Supply a useful video --title, --keywords, --query, or an audio filename')
     queries = args.query or [f'{keywords} {args.mood} scene', f'{keywords} cinematic footage']
     folder = (args.output or BASE / 'output/search' /
               (datetime.now().strftime('%Y%m%d-%H%M%S-') + uuid.uuid4().hex[:6])).resolve()
@@ -152,18 +193,28 @@ def main():
     try:
         entries, errors = search(queries, args.per_query)
         ranked = rank_candidates(entries, keywords, args.min_seconds, args.max_seconds)[:args.count]
-        report = {'audio': str(args.audio.resolve()), 'keywords': keywords, 'mood': args.mood,
+        report = {'audio': str(args.audio.resolve()) if args.audio else None,
+            'title': args.title, 'keywords': keywords, 'mood': args.mood,
             'queries': queries, 'candidates': ranked, 'search_errors': errors,
             'method': 'Metadata keyword overlap, duration filtering, and edit/reaction penalties. Not audiovisual semantic analysis.'}
         save_report(folder, report)
+        print(f'Clip report: {folder / "candidates.json"}', flush=True)
         if not ranked:
             print(f'No matching candidates found. Search diagnostics: {folder / "candidates.json"}', file=sys.stderr)
             return 1
         if args.download_top:
-            report['downloads'] = download_selected(ranked, args.download_top, folder, args.library)
+            report['requested_downloads'] = args.download_top
+            report['downloads'] = download_selected(ranked, args.download_top, folder, args.library,
+                                                    try_alternates=args.download_mode == 'best-available')
+            report['visuals_folder'] = str(prepare_visuals(report['downloads'], folder))
             save_report(folder, report)
-            if any('error' in item for item in report['downloads']):
-                print(f'Some downloads failed. See {folder / "README.md"}', file=sys.stderr)
+            success = sum('file' in item and 'error' not in item for item in report['downloads'])
+            print(f'Downloaded {success} of {args.download_top} requested clips.', flush=True)
+            print(f'Visuals folder: {report["visuals_folder"]}', flush=True)
+            print(f'Clip report: {folder / "candidates.json"}', flush=True)
+            failed = success < args.download_top or (args.download_mode == 'top-only' and any('error' in item for item in report['downloads']))
+            if failed:
+                print(f'Only {success} clips are available. See {folder / "README.md"}', file=sys.stderr)
                 return 1
         print(f'{len(ranked)} candidates saved. Open: {folder / "README.md"}', flush=True)
         return 0

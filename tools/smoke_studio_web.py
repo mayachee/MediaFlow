@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import sys
+import subprocess
 import tempfile
 import threading
 import time
@@ -24,6 +25,12 @@ def main():
         cache.parent.mkdir(parents=True)
         cache.write_bytes(b'cache fixture' * 100)
         state = StudioState()
+        fixture_video = output / 'source.mp4'
+        subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=green:s=160x90:r=10:d=1',
+                        '-c:v', 'libx264', '-pix_fmt', 'yuv420p', str(fixture_video)], check=True)
+        original = state.catalog['clips-auto']
+        state.catalog['clips-auto'] = dict(original, script='tests/fixtures/clip_search_runner.py',
+            args=original['args'] + ['--fixture-video', str(fixture_video), '--fixture-output', str(output / 'clip-search')])
         state.cleaner = WorkspaceCleaner(fixture)
         server = StudioServer(state)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -52,6 +59,21 @@ def main():
                 assert page.locator('[data-field="resolution"]').input_value() == '1080p'
                 assert not page.locator('[data-field="frame_skip"]').is_visible()
                 page.screenshot(path=str(output / 'youtube.png'), full_page=True)
+                page.get_by_role('button', name='Find & download clips', exact=True).click()
+                page.locator('[data-field="title"]').fill('forest mountains sunrise')
+                page.locator('[data-field="download_top"]').fill('2')
+                assert not page.locator('[data-field="audio"]').is_visible()
+                page.screenshot(path=str(output / 'find-download-form.png'), full_page=True)
+                page.get_by_role('button', name='Find & download', exact=True).click()
+                page.get_by_role('heading', name='2 clips downloaded', exact=True).wait_for(timeout=60000)
+                report = json.loads((output / 'clip-search/candidates.json').read_text())
+                assert report['title'] == 'forest mountains sunrise'
+                assert report['audio'] is None
+                page.screenshot(path=str(output / 'downloaded-clips.png'), full_page=True)
+                page.get_by_role('button', name='Use clips in a music video', exact=True).click()
+                visuals = page.locator('[data-field="images"]').input_value()
+                assert len(list(Path(visuals).glob('*.mp4'))) == 2
+                assert state.current['tool'] == 'clips-auto'
                 page.get_by_role('button', name='Workspace cleaner', exact=True).click()
                 page.locator('#clean-days').fill('0')
                 page.locator('#scan-cleaner').click()
@@ -100,6 +122,7 @@ def main():
                 browser.close()
             result = dict(status='passed', checks=['dashboard', 'progressive forms', 'YouTube defaults',
                 'cleaner preview/move/restore in temporary fixture', 'source explorer',
+                'title-only search/download with offline provider fixture', 'downloaded clip previews and creator handoff',
                 'real offline clip test job', 'responsive layouts', 'no browser exceptions'], media_preview=media_checked, screenshots=str(output))
             (output / 'result.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
             print(json.dumps(result, indent=2))

@@ -15,6 +15,12 @@ can run `python script_manager.py --no-browser` and open the printed session lin
 
 ## Dashboard workflow
 
+**Find & download clips** is a direct sidebar option and the destination of
+the home clip card. Enter an idea/title or keywords, select a download count,
+and run it; no audio is required. Successful downloads appear with previews and
+**Use clips in a music video** to fill the creator's visuals folder. Advanced
+settings hold optional audio context, extra keywords, mood, and candidate count.
+
 Choose **Create a video**, **YouTube & Shorts**, or **Find the right clips** on
 Overview. The forms show common inputs first and keep Python settings and
 extra arguments under **Advanced settings**. Audio-only master exports hide
