@@ -52,3 +52,8 @@ metadata.txt
 youtube_links.txt
 extracted_images/
 pinterest_uploads.json
+
+# Local artwork and soundtrack folders
+/GTA6/
+/gta6-songs/
+/Pinterest_images/

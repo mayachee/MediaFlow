@@ -60,13 +60,15 @@ import json
 import time
 import shutil
 import argparse
+import base64
+from io import BytesIO
 import tempfile
 from pathlib import Path
 from typing import List, Optional, Dict, Any, Tuple, Set
 
 import requests
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 import imagehash
 
 # Optional: YouTube Data API error class (falls back to Exception if google packages missing)
@@ -513,69 +515,17 @@ class PinterestUploader:
             print(f"  ERROR: Pinterest API unreachable: {e}", flush=True)
             return False
 
-    def upload_image_media(self, image_path: str) -> Optional[str]:
-        """
-        Register an image upload and send the binary data to Pinterest.
-
-        Returns the ``media_id`` on success, or ``None`` on failure.
-        """
-        register_data = {"media_type": "image"}
-
-        try:
-            resp = requests.post(
-                f"{self.BASE_URL}/media/upload",
-                headers=self.headers,
-                json=register_data,
-                timeout=30,
-            )
-            resp.raise_for_status()
-            media_data = resp.json()
-        except (requests.RequestException, ValueError) as e:
-            print(f"  [FAIL] Could not register media upload: {e}", flush=True)
-            return None
-
-        media_id = media_data.get("media_id")
-        upload_url = media_data.get("upload_url")
-
-        if not media_id or not upload_url:
-            print(f"  [FAIL] Unexpected media upload response: {media_data}", flush=True)
-            return None
-
-        image_size = os.path.getsize(image_path)
-
-        try:
-            with open(image_path, "rb") as f:
-                upload_resp = requests.put(
-                    upload_url,
-                    data=f,
-                    headers={
-                        "Content-Type": "image/jpeg",
-                        "Content-Length": str(image_size),
-                    },
-                    timeout=120,
-                )
-            upload_resp.raise_for_status()
-        except requests.RequestException as e:
-            print(f"  [FAIL] Could not upload image data: {e}", flush=True)
-            return None
-
-        return media_id
-
     def create_pin(
         self,
-        media_id: str,
+        media_source: Dict[str, Any],
         title: str = "",
         description: str = "",
         link: str = "",
     ) -> Optional[str]:
-        """
-        Create a Pin on the target board using an uploaded ``media_id``.
-
-        Returns the pin ID, or ``None`` on failure.
-        """
+        """Create a Pin on the target board and return its ID."""
         pin_data: Dict[str, Any] = {
             "board_id": self.board_id,
-            "media": {"media_id": media_id},
+            "media_source": media_source,
         }
         if title:
             pin_data["title"] = title
@@ -611,12 +561,26 @@ class PinterestUploader:
         description: str = "",
         link: str = "",
     ) -> Optional[str]:
-        """Full workflow: upload image → create pin. Returns pin ID or None."""
+        """Send a local image directly in the Create Pin request."""
         print(f"  Uploading: {os.path.basename(image_path)}", flush=True)
-        media_id = self.upload_image_media(image_path)
-        if not media_id:
+        try:
+            with Image.open(image_path) as original, BytesIO() as buffer:
+                image = ImageOps.exif_transpose(original)
+                has_transparency = "A" in image.getbands() or "transparency" in image.info
+                mode, format_name, subtype = ("RGBA", "PNG", "png") if has_transparency else ("RGB", "JPEG", "jpeg")
+                # Copy pixels into a fresh image so location and other metadata are omitted.
+                clean = Image.new(mode, image.size)
+                clean.paste(image.convert(mode))
+                clean.save(buffer, format=format_name, quality=95)
+                media_source = {
+                    "source_type": "image_base64",
+                    "content_type": f"image/{subtype}",
+                    "data": base64.b64encode(buffer.getvalue()).decode("ascii"),
+                }
+        except (OSError, ValueError, Image.DecompressionBombError) as exc:
+            print(f"  [FAIL] Could not read image: {exc}", flush=True)
             return None
-        return self.create_pin(media_id, title=title, description=description, link=link)
+        return self.create_pin(media_source, title=title, description=description, link=link)
 
 
 # ---------------------------------------------------------------------------
@@ -687,6 +651,7 @@ class PinterestWebUploader:
         image_path: str,
         title: str = "",
         description: str = "",
+        link: str = "",
     ) -> Optional[str]:
         """
         Upload a single image to Pinterest using the web UI.
@@ -865,6 +830,19 @@ class PinterestWebUploader:
                 except Exception:
                     pass
 
+            if link:
+                link_input = page.locator(
+                    'input[type="url"], input[placeholder*="link" i], '
+                    'input[placeholder*="website" i], input[data-testid="pin-link"]'
+                )
+                try:
+                    link_input.first.fill(link, timeout=5000)
+                    if link_input.first.input_value() != link:
+                        raise ValueError("The destination link was not retained")
+                except Exception as exc:
+                    print(f"  [FAIL] Could not set the destination link: {exc}", flush=True)
+                    return None
+
             # Click "Create" or "Publish" button
             try:
                 publish_btn = page.locator("button").filter(has_text="Create Pin")
@@ -895,6 +873,7 @@ class PinterestWebUploader:
         title: str = "",
         description: str = "",
         browser_executable: str = None,
+        link: str = "",
     ) -> List[Tuple[str, Optional[str]]]:
         """Upload all images in the list via the Pinterest web UI."""
         from playwright.sync_api import sync_playwright
@@ -1011,7 +990,7 @@ class PinterestWebUploader:
                     pin_url = None
                     for attempt in range(3):
                         try:
-                            pin_url = self.upload_image(page, img_path, title=title, description=description)
+                            pin_url = self.upload_image(page, img_path, title=title, description=description, link=link)
                         except Exception as e:
                             err_msg = str(e).lower()
                             print(f"  [RETRY] Attempt {attempt + 2}/3 after error: {e}", flush=True)
@@ -1208,6 +1187,8 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Path to browser executable for web mode (auto-detects Brave/Chrome/Edge)",
     )
+    pin.add_argument("--pin-link", default="", help="Destination URL for all pins")
+    pin.add_argument("--pin-title", default=None, help="Override the title for all pins")
     pin.add_argument("--pin-description", default=None, help="Override description for all pins")
     pin.add_argument("--metadata", default=None, help="Path to metadata.json for auto-generating pin descriptions (default: metadata.json)")
     pin.add_argument(
@@ -1216,7 +1197,9 @@ def parse_args() -> argparse.Namespace:
         help="Skip images that already have an upload log entry",
     )
     pin.add_argument("--dry-run", action="store_true", help="Show what would be uploaded without uploading")
-    pin.add_argument(
+    image_inputs = pin.add_mutually_exclusive_group()
+    image_inputs.add_argument("--image", action="append", help="Upload one local image. Repeat for more images.")
+    image_inputs.add_argument(
         "--images-dir",
         default=None,
         help="Directory of images to upload directly (skip extraction from video)",
@@ -1255,23 +1238,35 @@ def main() -> None:
     images_to_upload: List[str] = []
     list_path: Optional[str] = None
     step_num = 0
-    total_steps = 4 if not args.images_dir else 2
+    direct_images = args.image or args.images_dir
+    total_steps = 2 if direct_images else 4
 
     # ------------------------------------------------------------------
     # Step 1 — Wait for YouTube processing (skip if --images-dir)
     # ------------------------------------------------------------------
-    if args.images_dir:
+    if direct_images:
         step_num += 1
-        image_dir = Path(args.images_dir)
-        if not image_dir.exists():
-            print(f"ERROR: Images directory not found: {image_dir}", flush=True)
-            sys.exit(1)
-        for ext in ("*.jpg", "*.jpeg", "*.png", "*.bmp", "*.webp"):
-            images_to_upload.extend(str(p) for p in sorted(image_dir.glob(ext)))
-        if not images_to_upload:
-            print(f"ERROR: No images found in {image_dir}", flush=True)
-            sys.exit(1)
-        print(f"[{step_num}/{total_steps}] Found {len(images_to_upload)} image(s) in {image_dir}\n", flush=True)
+        if args.image:
+            candidates = [Path(path) for path in args.image]
+        else:
+            image_dir = Path(args.images_dir)
+            if not image_dir.is_dir():
+                sys.exit(f"ERROR: Images directory not found: {image_dir}")
+            supported = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+            candidates = sorted(
+                path for path in image_dir.iterdir()
+                if path.is_file() and path.suffix.lower() in supported
+            )
+        if not candidates:
+            sys.exit("ERROR: No images found.")
+        for path in dict.fromkeys(path.resolve() for path in candidates):
+            try:
+                with Image.open(path) as image:
+                    image.verify()
+            except (OSError, ValueError, Image.DecompressionBombError) as exc:
+                sys.exit(f"ERROR: Invalid image {path}: {exc}")
+            images_to_upload.append(str(path))
+        print(f"[{step_num}/{total_steps}] Found {len(images_to_upload)} image(s).", flush=True)
     else:
         # Resolve video source
         if args.local_video:
@@ -1360,6 +1355,12 @@ def main() -> None:
 
     if args.dry_run:
         print("=== DRY RUN ===", flush=True)
+        if args.pin_title:
+            print(f"  Title: {args.pin_title}", flush=True)
+        if args.pin_description:
+            print(f"  Description: {args.pin_description}", flush=True)
+        if args.pin_link:
+            print(f"  Destination link: {args.pin_link}", flush=True)
         for p in images_to_upload:
             print(f"  Would upload: {p}", flush=True)
         print("=== End DRY RUN ===", flush=True)
@@ -1407,9 +1408,10 @@ def main() -> None:
 
         web_results = web_uploader.upload_directory(
             images_to_upload,
-            title="",
+            title=args.pin_title or "",
             description=combined_desc,
             browser_executable=args.browser,
+            link=args.pin_link,
         )
         results = web_results
 
@@ -1445,18 +1447,19 @@ def main() -> None:
 
             print(f"  [{i}/{len(images_to_upload)}] Processing: {basename}", flush=True)
 
-            title = ""
+            title = args.pin_title or ""
             description = args.pin_description or ""
 
             if not description and metadata:
                 meta_title, meta_desc = match_image_to_metadata(img_path, metadata)
-                title = meta_title
+                title = title or meta_title
                 description = meta_desc
 
             pin_id = uploader.upload_image(
                 img_path,
                 title=title,
                 description=description,
+                link=args.pin_link,
             )
             results.append((img_path, pin_id))
 
