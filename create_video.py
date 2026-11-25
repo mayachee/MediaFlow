@@ -190,7 +190,38 @@ def desktop():
     window.mainloop()
 
 
+def mask_video(arguments):
+    parser = argparse.ArgumentParser(
+        prog='create_video.py mask', description='Hide a stationary region in an MP4.')
+    parser.add_argument('input', type=Path)
+    parser.add_argument('output', type=Path)
+    parser.add_argument('--region', type=int, nargs=4, required=True,
+                        metavar=('X', 'Y', 'WIDTH', 'HEIGHT'))
+    args = parser.parse_args(arguments)
+    source = args.input.expanduser().resolve()
+    output = args.output.expanduser().resolve()
+    if not source.is_file() or source.suffix.lower() != '.mp4':
+        parser.error('Choose an existing MP4 input.')
+    if output.suffix.lower() != '.mp4' or output.exists():
+        parser.error('Choose a new MP4 output filename.')
+    x, y, width, height = args.region
+    if min(x, y, width, height) < 1:
+        parser.error('Use positive pixel coordinates and dimensions.')
+
+    command = ['ffmpeg', '-hide_banner', '-n', '-i', str(source),
+               '-map', '0:v:0', '-map', '0:a?',
+               '-vf', f'delogo=x={x}:y={y}:w={width}:h={height}',
+               '-c:v', 'libx264', '-crf', '17', '-preset', 'slow',
+               '-fps_mode', 'passthrough', '-c:a', 'copy', str(output)]
+    try:
+        return subprocess.run(command).returncode
+    except OSError as error:
+        parser.error(f'Could not start FFmpeg: {error}')
+
+
 def main():
+    if sys.argv[1:2] == ['mask']:
+        return mask_video(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--audio', type=Path, help='Omit to open the desktop window')
     parser.add_argument('--visuals', type=Path, default=DEFAULT_VISUALS)
